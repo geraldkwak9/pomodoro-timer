@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANBANG 안방</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="scene">
+
+    <!-- TV 본체 -->
+    <div class="tv-body">
+
+      <!-- 좌측: 화면 + 버튼 -->
+      <div class="tv-left">
+
+        <!-- TV 화면 -->
+        <div class="tv-screen-frame">
+          <div class="tv-screen">
+            <div class="screen-header">
+              <span class="ch-tag">CH 1 · 목표 분량</span>
+              <span class="session-tag">세션 1</span>
+            </div>
+            <div class="timer-area">
+              <div class="timer-display" id="timer-display">25:00</div>
+            </div>
+            <div class="track-area">
+              <div class="track-bg" id="track-bg"></div>
+            </div>
+            <div class="subtitle-bar" id="subtitle-bar"></div>
+          </div>
+        </div>
+
+        <!-- 버튼 패널 -->
+        <div class="btn-panel">
+          <div class="btn-group">
+            <button class="tv-btn" id="btn-start" title="시작/일시정지">▶</button>
+            <button class="tv-btn" id="btn-unit" title="단위 완료">✓</button>
+            <button class="tv-btn" id="btn-reset" title="리셋">↺</button>
+            <button class="tv-btn" id="btn-stop" title="중지">⏹</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 우측: 다이얼 패널 -->
+      <div class="dial-panel">
+        <div class="dial-wrap">
+          <div class="dial" id="dial-tuning"></div>
+          <span class="dial-label">TUNE</span>
+        </div>
+        <div class="dial-wrap">
+          <div class="dial" id="dial-ch"></div>
+          <span class="dial-label">CH</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="timer.js"></script>
+  <script src="track.js"></script>
+  <script src="subtitle.js"></script>
+  <script src="tuning.js"></script>
+
+</body>
+</html>
