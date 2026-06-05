@@ -38,3 +38,17 @@ function checkOneMinuteLeft(timeText) {
 function showSessionChangedMessage() {
     updateSubtitle("세션이 15분으로 바뀝니다", true);
 }
+
+// ──────────────────────────────────────────
+// [상황 4] 세션이 시작했을 때
+// ──────────────────────────────────────────
+function showSessionStartMessage() {
+    updateSubtitle("세션이 시작되었습니다", false);
+}
+
+// ──────────────────────────────────────────
+// [상황 5] 세션이 종료되었을 때
+// ──────────────────────────────────────────
+function showSessionEndMessage() {
+    updateSubtitle("세션이 종료되었습니다", true); // 강조를 위해 빨간색(true) 처리
+}
