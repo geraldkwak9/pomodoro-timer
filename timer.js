@@ -54,7 +54,18 @@ function onPhaseEnd() {
     timeLeft = (typeof getNextSessionTime === 'function' ? getNextSessionTime() : 25) * 60;
 
     updateDisplay();
-    if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
+    
+// ──────────────────────────────────────────────────────────────
+    // [기존 코드는 그대로 두고, 자막 출력용 조건문만 아래에 추가]
+    // ──────────────────────────────────────────────────────────────
+    // timeLeft가 15분(15 * 60초 = 900초)인지 확인합니다.
+    if (timeLeft === 15 * 60) {
+      if (typeof showSessionChangedMessage === 'function') showSessionChangedMessage();
+    } else {
+      if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
+    }
+    // ──────────────────────────────────────────────────────────────
+    
     runTimer();
   }
 }
