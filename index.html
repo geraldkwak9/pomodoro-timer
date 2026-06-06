@@ -50,6 +50,7 @@
         <div class="dial-wrap">
           <div class="dial" id="dial-tuning"></div>
           <span class="dial-label">TUNE</span>
+          <span class="tuning-count" id="tuning-count">0</span>
         </div>
         <div class="dial-wrap">
           <div class="dial" id="dial-ch"></div>
@@ -61,11 +62,13 @@
 
   </div>
 
+  <!-- 로드 순서: storage(래퍼) → tuning(4번역할) → progress5(트랙 상태) → timer → track → subtitle -->
   <script src="storage.js"></script>
+  <script src="tuning.js"></script>
+  <script src="progress5.js"></script>
   <script src="timer.js"></script>
   <script src="track.js"></script>
   <script src="subtitle.js"></script>
-  <script src="tuning.js"></script>
 
 </body>
 </html>

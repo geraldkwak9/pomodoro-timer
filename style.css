@@ -306,3 +306,16 @@ body {
   letter-spacing: 0.05em;
   font-family: monospace;
 }
+
+/* ================================
+   튜닝 카운트 배지 (4번 역할)
+   ================================ */
+.tuning-count {
+  font-size: 9px;
+  font-family: monospace;
+  color: var(--accent-green);
+  letter-spacing: 0.04em;
+  min-width: 14px;
+  text-align: center;
+  line-height: 1;
+}
