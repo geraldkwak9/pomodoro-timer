@@ -22,7 +22,10 @@ function showGoalSetMessage() {
     updateSubtitle("목표단위가 입력되었습니다", false);
 }
 
-// [상황 2] 1분 전 감지 (01:00부터 00:01까지 계속 유지되도록 수정)
+
+// ──────────────────────────────────────────
+// [상황 2] 세션이 1분 이하일때
+// ──────────────────────────────────────────
 function checkOneMinuteLeft(timeText) {
     // timeText가 "00:59" 라면 앞의 두 글자 "00"을 추출합니다.
     const minutes = timeText.split(':')[0]; 
@@ -53,4 +56,31 @@ function showSessionStartMessage() {
 // ──────────────────────────────────────────
 function showSessionEndMessage() {
     updateSubtitle("세션이 종료되었습니다", true); // 강조를 위해 빨간색(true) 처리
+}
+// ──────────────────────────────────────────
+// [상황 6] 리셋 버튼을 눌렀을 때
+// ──────────────────────────────────────────
+function showResetMessage() {
+    updateSubtitle("타이머가 리셋되었습니다", false);
+}
+
+// ──────────────────────────────────────────
+// [상황 7] 일시정지 되었을 때
+// ──────────────────────────────────────────
+function showPauseMessage() {
+    updateSubtitle("타이머가 일시중지되었습니다", false);
+}
+
+// ──────────────────────────────────────────
+// [상황 8] 중지(⏹) 버튼을 눌렀을 때
+// ──────────────────────────────────────────
+function showStopMessage() {
+    updateSubtitle("타이머가 중단되었습니다", false);
+}
+
+// ──────────────────────────────────────────
+// [상황 9] 단위 완료(✓) 버튼을 눌렀을 때
+// ──────────────────────────────────────────
+function showUnitCompleteMessage() {
+    updateSubtitle("단위가 완료되었습니다", false);
 }
