@@ -113,6 +113,9 @@ function resetTimer() {
 
   timeLeft = 25 * 60;
   updateDisplay();
+
+  // [자막 추가] 리셋 시 자막 출력
+  if (typeof showResetMessage === 'function') showResetMessage();
 }
 
 // ── 초기 표시: localStorage에 저장된 nextSessionTime 반영 ────────────────────
@@ -126,13 +129,30 @@ updateDisplay();
 document.getElementById('btn-start').addEventListener('click', function () {
   if (isRunning) {
     pauseTimer();
+    if (typeof showPauseMessage === 'function') showPauseMessage();
   } else {
-    if (currentPhase === 'session' && typeof showSessionStartMessage === 'function') {
-      showSessionStartMessage();
+    if (currentPhase === 'session') {
+      const nextTime = (typeof getNextSessionTime === 'function') ? getNextSessionTime() : 25;
+      if (nextTime === 15) {
+        if (typeof showSessionChangedMessage === 'function') showSessionChangedMessage();
+      } else {
+        if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
+      }
+    } else {
+      if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
     }
     startTimer();
   }
 });
 
-document.getElementById('btn-stop').addEventListener('click', pauseTimer);
-document.getElementById('btn-reset').addEventListener('click', resetTimer);
+// 1. [수정] 중지(⏹) 버튼 클릭 시: 타이머를 멈추고 "중단되었습니다" 자막 출력
+document.getElementById('btn-stop').addEventListener('click', function () {
+  pauseTimer();
+  if (typeof showStopMessage === 'function') showStopMessage();
+});
+
+// 2. [수정] 리셋(↺) 버튼 클릭 시: 값을 초기화하는 resetTimer()를 실행 (자막은 함수 내부에 넣어도 되지만 안전하게 여기서 호출)
+document.getElementById('btn-reset').addEventListener('click', function () {
+  resetTimer();
+  if (typeof showResetMessage === 'function') showResetMessage();
+});
