@@ -75,7 +75,7 @@ state.goalUnits === 0
 (state.completedUnits / state.goalUnits) * 100
 );
 
-progressElement.textContent = ${percent}%;
+progressElement.textContent = '${percent}%';
 }
 }
 
