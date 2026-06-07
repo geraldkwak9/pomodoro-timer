@@ -20,6 +20,7 @@ state = JSON.parse(saved);
 }
 
 updateUI();
+initTrack();
 }
 
 // ===== 목표 단위 설정 =====
