@@ -25,7 +25,15 @@ function _updateTuningBadge() {
 function onTuningButtonClick() {
   setTuningCount(getTuningCount() + 1);
   _updateTuningBadge();
+  _playTuningEffect();
 }
+
+function _playTuningEffect() {
+   const screen = document.querySelector('.tv-screen');
+   if (!screen) return;
+   screen.classList.add('tuning-active');
+   setTimeout(() => screen.classList.remove('tuning-active'), 800);
+ }
 
 /**
  * 세션 타이머가 00:00에 도달하는 시점에 timer.js에서 호출된다.

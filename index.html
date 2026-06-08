@@ -18,8 +18,7 @@
   <!-- TV 화면 -->
   <div class="tv-screen">
     <div class="screen-header">
-      <span class="ch-tag">CH 1 · 목표 분량</span>
-      <span class="session-tag">세션 1</span>
+      <span class="ch-tag" id="project-name-display">ANBANG</span>
     </div>
     <div class="timer-area">
       <div class="timer-display" id="timer-display">25:00</div>
@@ -42,8 +41,8 @@
   <div class="dial-wrap tuning-dial-wrap">
     <div class="dial" id="dial-tuning"></div>
     <!-- <span class="tuning-count" id="tuning-count">0</span> -->
+     
   </div>
-
   <!-- 하단 버튼 -->
   <div class="btn-row">
     <button class="tv-btn" id="btn-start" title="시작/일시정지">▶</button>
@@ -52,13 +51,45 @@
     <button class="tv-btn" id="btn-unit" title="단위 완료">✓</button>
   </div>
 </div>
+  </div>
+</div>
 
+<!-- CF 편집 팝업 -->
+<div id="cf-edit-popup">
+  <div class="cf-edit-modal">
+<h2>📺 휴식 CF 편성표</h2>
+    <div id="cf-item-list"></div>
+    <button id="cf-add-btn">+ 항목 추가</button>
+    <button id="cf-save-btn">저장</button>
+    <button id="cf-close-btn">✕ 닫기</button>
+    </div>
+</div>
+  
 <!-- 설정 팝업 -->
 <div class="setup-overlay" id="setup-overlay">
   <div class="setup-modal">
+
+ <!-- 온보딩: 첫 접속 시 localStorage 'visited' 없으면 온보딩 화면 표시 -->  
+ <div class="setup-step" id="step-onboarding">
+   <h2>📺 사용설명서</h2>
+   <div style="font-family:monospace; font-size:11px; color:#888; line-height:2;">
+     <p style="color:#e8c870; margin-bottom:8px;">버튼</p>
+    <p>▶ 시작 / 일시정지</p>
+    <p>↺ 리셋 &nbsp; ⏹ 중지 &nbsp; ✓ 단위 완료</p>
+    <p style="color:#e8c870; margin-top:12px; margin-bottom:8px;">다이얼</p>
+    <p>CHANNEL 짧게 클릭 → 채널 설정</p>
+    <p>CHANNEL 꾹 누르기 → 휴식 CF 편집</p>
+    <p>TUNING 집중이 흐트러질 때 클릭 → 다음 세션 길이 자동 조정</p>
+    <p style="color:#e8c870; margin-top:12px; margin-bottom:8px;">채널</p>
+    <p>CH1 · 분량 기반 (단원, 챕터 등)</p>
+    <p>CH2 · 시간 기반</p>
+    <p>자유 시청 · 목표 없이 집중</p>
+  </div>
+   <button id="onboarding-next-btn" style="margin-top:16px;">시작하기 →</button>
+ </div>
     
     <!-- 채널 선택 -->
-    <div class="setup-step" id="step-channel">
+    <div class="setup-step" id="step-channel" style="display:none">
       <h2>채널을 선택하세요</h2>
       <button class="ch-btn" id="ch1-btn">CH1 · 분량</button>
   <button class="ch-btn" id="ch2-btn">CH2 · 시간</button>
@@ -75,13 +106,15 @@
       <div id="ch1-fields">
         <input type="text" id="unit-name" placeholder="단위 이름 (예: 단원)">
         <input type="number" id="goal-units" placeholder="목표 개수 (예: 20)">
+        <input type="number" id="completed-units" placeholder="현재 진행 (예: 5)">
       </div>
       <div id="ch2-fields" style="display:none">
-        <input type="number" id="goal-amount" placeholder="목표 시간">
          <select id="time-unit">
       <option value="minutes">분</option>
       <option value="hours">시간</option>
     </select>
+    <input type="number" id="goal-amount" placeholder="목표 시간 (예: 20)">
+    <input type="number" id="completed-amount" placeholder="현재 진행 (예: 5)">
       </div>
       <button id="setup-confirm">시작하기</button>
     </div>
@@ -97,6 +130,8 @@
   <script src="timer.js"></script>
   <script src="track.js"></script>
   <script src="subtitle.js"></script>
+  <script src="cf.js"></script>
+  <script src="sound.js"></script>
   <script src="setup.js"></script>
 
 </body>

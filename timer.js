@@ -3,13 +3,20 @@
 let sessionStartTime = null;
 
 // ── 상수 ─────────────────────────────────────────────────────────────────────
-const BREAK_DURATION_SECONDS = 10 * 60; // 10분 휴식
+const BREAK_DURATION_SECONDS = 10 * 60; //10분 휴식
+const BREAK_WARNING_SECONDS = 60; // 1분 전 경고
+//const BREAK_DURATION_SECONDS = 7; //TEST
+//const BREAK_WARNING_SECONDS = Math.floor(BREAK_DURATION_SECONDS * 0.5); //TEST
+
 
 // ── 상태 변수 (기존 팀 코드 구조 유지) ──────────────────────────────────────
+//let timeLeft = 10;//test용
+let accumulatedMinutes = 0;
 let timeLeft = 25 * 60;
 let timerId = null;
 let isRunning = false;
 let currentPhase = 'session'; // 'session' | 'break'
+let goalReached = false;
 
 // ── 화면 갱신 ────────────────────────────────────────────────────────────────
 // [FIX] 기존 팀 코드의 "timer" → 실제 HTML id인 "timer-display"로 수정
@@ -22,8 +29,14 @@ function updateDisplay() {
 
   if (timerDisplay) timerDisplay.textContent = timeText;
 
-  // subtitle.js 연동: 1분 전 경고 감지 (런타임 호출이므로 로드 순서 무관)
-  if (typeof checkOneMinuteLeft === 'function') checkOneMinuteLeft(timeText);
+
+  if (currentPhase === 'session' && timeLeft === 60) {
+  if (typeof showCFComingMessage === 'function') showCFComingMessage();
+}
+if (currentPhase === 'break' && timeLeft === BREAK_WARNING_SECONDS) {
+  if (typeof onBreakOneMinuteLeft === 'function') onBreakOneMinuteLeft();
+}
+
 
   // CH2 시간 기반: 타이머 틱마다 트랙 자동 업데이트
 const p = getCurrentProject();
@@ -38,6 +51,12 @@ if (p && p.channel === 2) {
   if (project) {
     project.completedMinutes = Math.min(totalElapsed, project.goalMinutes);
     saveProgress(data);
+  if (!goalReached && project.completedMinutes >= project.goalMinutes) {
+  goalReached = true;
+  if (typeof updateSubtitle === 'function') {
+    updateSubtitle('🎉 목표를 달성했습니다', false);
+     }
+   }
     if (typeof updateTrack === 'function') updateTrack();
   }
 }
@@ -55,11 +74,12 @@ function onPhaseEnd() {
     // subtitle.js 연동: 번아웃 판정 여부에 따라 자막 분기
     if (typeof getNextSessionTime === 'function' && getNextSessionTime() === 15) {
       if (typeof showSessionChangedMessage === 'function') showSessionChangedMessage();
-    } else {
-      if (typeof showSessionEndMessage === 'function') showSessionEndMessage();
+    /*} else {
+      if (typeof showSessionEndMessage === 'function') showSessionEndMessage();*/
     }
 
     // 휴식 Phase로 전환
+    if (typeof showCFScreen === 'function') showCFScreen(BREAK_DURATION_SECONDS);
     currentPhase = 'break';
     timeLeft = BREAK_DURATION_SECONDS;
     updateDisplay();
@@ -67,6 +87,7 @@ function onPhaseEnd() {
 
   } else {
     // 휴식 종료 → 세션 Phase로 전환
+    if (typeof hideCFScreen === 'function') hideCFScreen();
     currentPhase = 'session';
 
     // ★ [4번 역할 주입] tuningCount 완전 초기화 + nextSessionTime 반영(15분 또는 25분)
@@ -78,12 +99,13 @@ function onPhaseEnd() {
 // ──────────────────────────────────────────────────────────────
     // [기존 코드는 그대로 두고, 자막 출력용 조건문만 아래에 추가]
     // ──────────────────────────────────────────────────────────────
-    // timeLeft가 15분(15 * 60초 = 900초)인지 확인합니다.
-    if (timeLeft === 15 * 60) {
-      if (typeof showSessionChangedMessage === 'function') showSessionChangedMessage();
-    } else {
+    setTimeout(() => {
+      // 이전 자막 클리어
+      const subtitleText = document.querySelector('.subtitle-text');
+      if (subtitleText) subtitleText.textContent = '';
       if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
-    }
+    }, 900);
+    //if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
     // ──────────────────────────────────────────────────────────────
     
     runTimer();
@@ -107,22 +129,28 @@ function runTimer() {
   }, 1000);
 }
 
-// pauseTimer: sessionStartTime을 null로 지우지 말고 누적 elapsed를 별도 보관
-let accumulatedMinutes = 0; // 누적 경과 분 (일시정지 보존용)
+
 
 // ── 공개 함수: 시작 ───────────────────────────────────────────────────────────
+let fadeTimerId = null;
 function startTimer() {
   if (isRunning) return;
   sessionStartTime = Date.now();
+  clearTimeout(fadeTimerId);
+  fadeTimerId = setTimeout(() => {
+    if (timerDisplay) timerDisplay.classList.add('faded');
+  }, 5000);
   runTimer();
 }
 
 // ── 공개 함수: 일시정지 ───────────────────────────────────────────────────────
 function pauseTimer() {
-  if (sessionStartTime) {
+  if (sessionStartTime && currentPhase === 'session') {
     accumulatedMinutes += (Date.now() - sessionStartTime) / 1000 / 60;
   }
   sessionStartTime = null;  // 이제 안전하게 null 가능
+  clearTimeout(fadeTimerId);
+  if (timerDisplay) timerDisplay.classList.remove('faded');
   clearInterval(timerId);
   timerId = null;
   isRunning = false;
@@ -133,10 +161,23 @@ function resetTimer() {
   clearInterval(timerId);
   timerId = null;
   isRunning = false;
-  currentPhase = 'session';
+  if (currentPhase === 'break' && typeof hideCFScreen === 'function') hideCFScreen();
+currentPhase = 'session';
   accumulatedMinutes = 0; 
+  goalReached = false;
   sessionStartTime = null; 
+  // CH2: accumulatedMinutes 리셋 시 completedMinutes는 유지
+   const p = getCurrentProject();
+   if (p && p.channel === 2) {
+     const data = loadProgress();
+     const project = data.projects.find(proj => proj.id === data.currentProjectId);
+     if (project) {
+       accumulatedMinutes = project.completedMinutes;
+     }
+   }
 
+  clearTimeout(fadeTimerId);
+if (timerDisplay) timerDisplay.classList.remove('faded');
   // ★ [4번 역할 주입] localStorage 완전 초기화 (tuningCount, nextSessionTime)
   if (typeof setTuningCount === 'function') setTuningCount(0);
   if (typeof setNextSessionTime === 'function') setNextSessionTime(25);
@@ -150,6 +191,8 @@ function resetTimer() {
 
 // ── 초기 표시: localStorage에 저장된 nextSessionTime 반영 ────────────────────
 timeLeft = (typeof getNextSessionTime === 'function' ? getNextSessionTime() : 25) * 60;
+//timeLeft = 10; //test용
+
 updateDisplay();
 
 // ── 버튼 이벤트 ──────────────────────────────────────────────────────────────
@@ -157,20 +200,12 @@ updateDisplay();
 //       실제 HTML id인 "btn-start"/"btn-stop"/"btn-reset"으로 수정
 
 document.getElementById('btn-start').addEventListener('click', function () {
+  unlockAudio();
   if (isRunning) {
     pauseTimer();
     if (typeof showPauseMessage === 'function') showPauseMessage();
   } else {
-    if (currentPhase === 'session') {
-      const nextTime = (typeof getNextSessionTime === 'function') ? getNextSessionTime() : 25;
-      if (nextTime === 15) {
-        if (typeof showSessionChangedMessage === 'function') showSessionChangedMessage();
-      } else {
-        if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
-      }
-    } else {
-      if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
-    }
+    if (typeof showSessionStartMessage === 'function') showSessionStartMessage();
     startTimer();
   }
 });
@@ -184,5 +219,14 @@ document.getElementById('btn-stop').addEventListener('click', function () {
 // 2. [수정] 리셋(↺) 버튼 클릭 시: 값을 초기화하는 resetTimer()를 실행 (자막은 함수 내부에 넣어도 되지만 안전하게 여기서 호출)
 document.getElementById('btn-reset').addEventListener('click', function () {
   resetTimer();
-  if (typeof showResetMessage === 'function') showResetMessage();
 });
+
+ /**
+  * 프로젝트 전환 시 누적 시간 초기화
+  * CH2는 기존 completedMinutes부터 이어서 누적, CH1/free는 0으로 초기화
+  */
+ function resetAccumulatedMinutes() {
+   const p = getCurrentProject();
+   accumulatedMinutes = (p && p.channel === 2) ? (p.completedMinutes || 0) : 0;
+   sessionStartTime = null;
+ }
