@@ -1,84 +1,101 @@
-// ===== 상태 관리 =====
+'use strict';
+
+// ===== 상태 관리 (기존 구조 확장) =====
 const STORAGE_KEY = "pomodoroProgress";
 
-let state = {
-goalUnits: 0,
-completedUnits: 0
-};
-
-// 저장
-function saveProgress() {
-localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+// 저장 (기존 saveProgress 확장)
+function saveProgress(data) {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-// 불러오기
+// 불러오기(기존 loadProgress 확장)
 function loadProgress() {
-const saved = localStorage.getItem(STORAGE_KEY);
-
-if (saved) {
-state = JSON.parse(saved);
+const raw = localStorage.getItem(STORAGE_KEY);
+return raw ? JSON.parse(raw) : { projects: [], currentProjectId: null };
 }
 
-updateUI();
-initTrack();
-}
-
-// ===== 목표 단위 설정 =====
-function setGoalUnits(units) {
-state.goalUnits = Number(units);
-state.completedUnits = 0;
-
-saveProgress();
-updateUI();
-}
-
-// ===== 단위 완료 =====
-function completeUnit() {
-state.completedUnits++;
-
-saveProgress();
-updateUI();
-
-if (state.completedUnits >= state.goalUnits) {
-alert("🎉 목표 단위를 모두 완료했습니다!");
-}
-}
-
-// ===== 진행 상황 초기화 =====
+// 초기화 (기존 resetProgress 유지)
 function resetProgress() {
-localStorage.removeItem(STORAGE_KEY);
-
-state = {
-goalUnits: 0,
-completedUnits: 0
-};
-
-updateUI();
+  localStorage.removeItem(STORAGE_KEY);
+  if (typeof initTrack === 'function') initTrack();
 }
 
-// ===== UI 업데이트 =====
+// ===== 프로젝트 추가 =====
+function addProject({ name, channel, unitName, goalUnits, goalMinutes }) {
+  const data = loadProgress();
+  const id = Date.now();
+  const project = { id, name, channel, completedUnits: 0 };
+  if (channel === 1) {
+    project.unitName = unitName;
+    project.goalUnits = goalUnits;
+  } else {
+    project.goalMinutes = goalMinutes;
+    project.completedMinutes = 0;
+  }
+  data.projects.push(project);
+  data.currentProjectId = id;
+  saveProgress(data);
+  return project;
+}
+
+// ===== 현재 프로젝트 =====
+function getCurrentProject() {
+  const data = loadProgress();
+  return data.projects.find(p => p.id === data.currentProjectId) || null;
+}
+
+function setCurrentProject(id) {
+  const data = loadProgress();
+  data.currentProjectId = id;
+  saveProgress(data);
+}
+
+// ===== 채널별 프로젝트 목록 =====
+function getProjectsByChannel(channel) {
+  const data = loadProgress();
+  return data.projects.filter(p => p.channel === channel);
+}
+
+// ===== 단위 완료 (기존 completeUnit 확장) =====
+function completeUnit() {
+  const data = loadProgress();
+  const project = data.projects.find(p => p.id === data.currentProjectId);
+  if (!project) return;
+  if (project.channel === 1) {
+    project.completedUnits = Math.min(project.completedUnits + 1, project.goalUnits);
+    if (project.completedUnits >= project.goalUnits) {
+      alert('🎉 목표 단위를 모두 완료했습니다!');
+    }
+  }
+  saveProgress(data);
+}
+
+// ===== UI 업데이트 (기존 updateUI 유지) =====
 function updateUI() {
-const goalElement = document.getElementById("goal");
-const completedElement = document.getElementById("completed");
-const progressElement = document.getElementById("progress");
-
-if (goalElement)
-goalElement.textContent = state.goalUnits;
-
-if (completedElement)
-completedElement.textContent = state.completedUnits;
-
-if (progressElement) {
-const percent =
-state.goalUnits === 0
-? 0
-: Math.round(
-(state.completedUnits / state.goalUnits) * 100
-);
-
-progressElement.textContent = '${percent}%';
+  const project = getCurrentProject();
+  if (!project) return;
+  const goalElement = document.getElementById("goal");
+  const completedElement = document.getElementById("completed");
+  if (goalElement) goalElement.textContent = project.goalUnits || project.goalMinutes;
+  if (completedElement) completedElement.textContent = project.completedUnits || project.completedMinutes;
 }
-}
+
+// ===== state 호환 (track.js용) =====
+Object.defineProperty(window, 'state', {
+  get() {
+    const p = getCurrentProject();
+    if (!p) return { goalUnits: 0, completedUnits: 0 };
+    return {
+      goalUnits: p.channel === 1 ? p.goalUnits : p.goalMinutes,
+      completedUnits: p.channel === 1 ? p.completedUnits : p.completedMinutes
+    };
+  }
+});
 
 // ===== 앱 시작 시 이어보기 =====
-window.addEventListener("load", loadProgress);
+window.addEventListener("load", () => {
+  const data = loadProgress();
+  if (data.currentProjectId) {
+    updateUI();
+  }
+});

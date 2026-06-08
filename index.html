@@ -11,57 +11,83 @@
   <div class="scene">
 
     <!-- TV 본체 -->
-    <div class="tv-body">
+<!-- TV 본체 -->
+<div class="tv-wrap">
+  <img class="tv-img" src="tv.png" alt="TV">
 
-      <!-- 좌측: 화면 + 버튼 -->
-      <div class="tv-left">
+  <!-- TV 화면 -->
+  <div class="tv-screen">
+    <div class="screen-header">
+      <span class="ch-tag">CH 1 · 목표 분량</span>
+      <span class="session-tag">세션 1</span>
+    </div>
+    <div class="timer-area">
+      <div class="timer-display" id="timer-display">25:00</div>
+    </div>
+    <div class="track-area">
+      <div class="track-bg" id="track-bg"></div>
+    </div>
+    <div class="subtitle-bar" id="subtitle-bar">
+      <div class="subtitle-dot"></div>
+      <span class="subtitle-text"></span>
+    </div>
+  </div>
 
-        <!-- TV 화면 -->
-        <div class="tv-screen-frame">
-          <div class="tv-screen">
-            <div class="screen-header">
-              <span class="ch-tag">CH 1 · 목표 분량</span>
-              <span class="session-tag">세션 1</span>
-            </div>
-            <div class="timer-area">
-              <div class="timer-display" id="timer-display">25:00</div>
-            </div>
-            <div class="track-area">
-              <div class="track-bg" id="track-bg"></div>
-            </div>
-            <div class="subtitle-bar" id="subtitle-bar">
-              <div class="subtitle-dot"></div>
-              <span class="subtitle-text"></span>
-          </div>
-        </div>
+  <!-- CHANNEL 다이얼 -->
+  <div class="dial-wrap ch-dial-wrap">
+    <div class="dial" id="dial-ch"></div>
+  </div>
 
-        <!-- 버튼 패널 -->
-        <div class="btn-panel">
-          <div class="btn-group">
-            <button class="tv-btn" id="btn-start" title="시작/일시정지">▶</button>
-            <button class="tv-btn" id="btn-unit" title="단위 완료">✓</button>
-            <button class="tv-btn" id="btn-reset" title="리셋">↺</button>
-            <button class="tv-btn" id="btn-stop" title="중지">⏹</button>
-          </div>
-        </div>
+  <!-- TUNING 다이얼 -->
+  <div class="dial-wrap tuning-dial-wrap">
+    <div class="dial" id="dial-tuning"></div>
+    <!-- <span class="tuning-count" id="tuning-count">0</span> -->
+  </div>
 
+  <!-- 하단 버튼 -->
+  <div class="btn-row">
+    <button class="tv-btn" id="btn-start" title="시작/일시정지">▶</button>
+    <button class="tv-btn" id="btn-reset" title="리셋">↺</button>
+    <button class="tv-btn" id="btn-stop" title="중지">⏹</button>
+    <button class="tv-btn" id="btn-unit" title="단위 완료">✓</button>
+  </div>
+</div>
+
+<!-- 설정 팝업 -->
+<div class="setup-overlay" id="setup-overlay">
+  <div class="setup-modal">
+    
+    <!-- 채널 선택 -->
+    <div class="setup-step" id="step-channel">
+      <h2>채널을 선택하세요</h2>
+      <button class="ch-btn" id="ch1-btn">CH1 · 분량</button>
+  <button class="ch-btn" id="ch2-btn">CH2 · 시간</button>
+  <button class="ch-btn" id="free-btn">자유 시청</button>
+  <button id="close-btn">✕ 닫기</button>
+</div>
+
+    <!-- 프로젝트 설정 -->
+    <div class="setup-step" id="step-project" style="display:none">
+      <h2>프로젝트 설정</h2>
+      <button id="back-btn">← 뒤로</button>
+      <div id="project-list"></div> 
+      <input type="text" id="project-name" placeholder="프로젝트 이름 (예: 유기화학 교재)">
+      <div id="ch1-fields">
+        <input type="text" id="unit-name" placeholder="단위 이름 (예: 단원)">
+        <input type="number" id="goal-units" placeholder="목표 개수 (예: 20)">
       </div>
-
-      <!-- 우측: 다이얼 패널 -->
-      <div class="dial-panel">
-        <div class="dial-wrap">
-          <div class="dial" id="dial-tuning"></div>
-          <span class="dial-label">TUNE</span>
-          <span class="tuning-count" id="tuning-count">0</span>
-        </div>
-        <div class="dial-wrap">
-          <div class="dial" id="dial-ch"></div>
-          <span class="dial-label">CH</span>
-        </div>
+      <div id="ch2-fields" style="display:none">
+        <input type="number" id="goal-amount" placeholder="목표 시간">
+         <select id="time-unit">
+      <option value="minutes">분</option>
+      <option value="hours">시간</option>
+    </select>
       </div>
-
+      <button id="setup-confirm">시작하기</button>
     </div>
 
+  </div>
+</div>
   </div>
 
   <!-- 로드 순서: storage(래퍼) → tuning(4번역할) → progress5(트랙 상태) → timer → track → subtitle -->
@@ -71,6 +97,7 @@
   <script src="timer.js"></script>
   <script src="track.js"></script>
   <script src="subtitle.js"></script>
+  <script src="setup.js"></script>
 
 </body>
 </html>
