@@ -64,7 +64,9 @@ function completeUnit() {
   if (project.channel === 1) {
     project.completedUnits = Math.min(project.completedUnits + 1, project.goalUnits);
     if (project.completedUnits >= project.goalUnits) {
-      alert('🎉 목표 단위를 모두 완료했습니다!');
+      if (typeof updateSubtitle === 'function') {
+       updateSubtitle('🎉 목표를 달성했습니다', false);
+     }
     }
   }
   saveProgress(data);
@@ -84,7 +86,7 @@ function updateUI() {
 Object.defineProperty(window, 'state', {
   get() {
     const p = getCurrentProject();
-    if (!p) return { goalUnits: 0, completedUnits: 0 };
+    if (!p || p.channel === 'free') return { goalUnits: 0, completedUnits: 0 };
     return {
       goalUnits: p.channel === 1 ? p.goalUnits : p.goalMinutes,
       completedUnits: p.channel === 1 ? p.completedUnits : p.completedMinutes

@@ -1,8 +1,11 @@
-function updateSubtitle(text, isWarning) {
+'use strict';
+let subtitleTimer = null;
+
+function updateSubtitle(text, isWarning, persist = false) {
     const subtitleText = document.querySelector(".subtitle-text");
     const subtitleBar = document.querySelector(".subtitle-bar");
     if (!subtitleText || !subtitleBar) return;
-
+    clearTimeout(subtitleTimer);
     subtitleText.textContent = text; 
 
     if (isWarning) {
@@ -13,20 +16,27 @@ function updateSubtitle(text, isWarning) {
         subtitleText.style.color = "var(--accent-amber)";
         subtitleBar.style.borderTop = "1px solid #1a1a1a";
     }
+    if (!persist) {
+   subtitleTimer = setTimeout(() => {
+     subtitleText.textContent = '';
+     subtitleBar.style.borderTop = '1px solid #1a1a1a';
+     subtitleText.style.color = 'var(--accent-amber)';
+   }, 2000);
+  }
 }
 
 // ──────────────────────────────────────────
 // [상황 1] 목표 단위를 입력했을 때
 // ──────────────────────────────────────────
-function showGoalSetMessage() {
+/*function showGoalSetMessage() {
     updateSubtitle("목표단위가 입력되었습니다", false);
-}
+}*/
 
 
 // ──────────────────────────────────────────
 // [상황 2] 세션이 1분 이하일때
 // ──────────────────────────────────────────
-function checkOneMinuteLeft(timeText) {
+/*function checkOneMinuteLeft(timeText) {
     // timeText가 "00:59" 라면 앞의 두 글자 "00"을 추출합니다.
     const minutes = timeText.split(':')[0]; 
 
@@ -35,13 +45,13 @@ function checkOneMinuteLeft(timeText) {
     if (minutes === "00" || timeText === "01:00") {
         updateSubtitle("곧 타이머가 종료됩니다", true);
     }
-}
+}*/
 
 // ──────────────────────────────────────────
 // [상황 3] 세션이 15분으로 바뀌었을 때
 // ──────────────────────────────────────────
 function showSessionChangedMessage() {
-    updateSubtitle("세션이 15분으로 바뀝니다", true);
+    updateSubtitle("세션이 15분으로 바뀝니다", true, true);
 }
 
 // ──────────────────────────────────────────
@@ -54,9 +64,9 @@ function showSessionStartMessage() {
 // ──────────────────────────────────────────
 // [상황 5] 세션이 종료되었을 때
 // ──────────────────────────────────────────
-function showSessionEndMessage() {
+/*function showSessionEndMessage() {
     updateSubtitle("세션이 종료되었습니다", true); // 강조를 위해 빨간색(true) 처리
-}
+}*/
 // ──────────────────────────────────────────
 // [상황 6] 리셋 버튼을 눌렀을 때
 // ──────────────────────────────────────────
@@ -81,6 +91,23 @@ function showStopMessage() {
 // ──────────────────────────────────────────
 // [상황 9] 단위 완료(✓) 버튼을 눌렀을 때
 // ──────────────────────────────────────────
-function showUnitCompleteMessage() {
-    updateSubtitle("단위가 완료되었습니다", false);
+ function showUnitCompleteMessage() {
+   const p = typeof getCurrentProject === 'function' ? getCurrentProject() : null;
+   const unitName = p?.unitName || '단위';
+   const completed = p ? p.completedUnits : 0;
+   const goal = p ? p.goalUnits : 0;
+   updateSubtitle(`${completed}/${goal} ${unitName} 완료`, false);
+ }
+
+function showCFComingMessage() {
+  updateSubtitle("잠시 후 휴식 CF가 방송됩니다", false, true);
 }
+
+ function showSessionComingMessage() {
+   const nextTime = typeof getNextSessionTime === 'function' ? getNextSessionTime() : 25;
+   if (nextTime === 15) {
+     updateSubtitle('다음 세션은 15분으로 조정됩니다', false, true);
+   } else {
+     updateSubtitle('잠시 후 본 방송이 계속됩니다', false, true);
+   }
+ }

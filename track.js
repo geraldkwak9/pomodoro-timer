@@ -6,11 +6,19 @@ const MAX_CELLS = 20;
 // 트랙 초기화
 function initTrack() {
   const trackBg = document.getElementById('track-bg');
+  const btnUnit = document.getElementById('btn-unit');
   if (!trackBg) return;
   trackBg.innerHTML = '';
 
   const p = getCurrentProject();
   if (!p) return;
+
+  if (p.channel === 'free') {
+     trackBg.style.display = 'none';
+     return;
+   }
+
+   trackBg.style.display = '';
 
   if (p.channel === 2) {
     // CH2: 하나의 긴 바
@@ -35,6 +43,7 @@ function initTrack() {
 function updateTrack() {
   const p = getCurrentProject();
   if (!p) return;
+  if (p.channel === 'free') return;
 
   if (p.channel === 2) {
     const bar = document.getElementById('time-bar');
@@ -65,8 +74,10 @@ function updateTrack() {
 
 // 단위 완료 버튼
 document.getElementById('btn-unit').addEventListener('click', () => {
+  const p = getCurrentProject();
+  if (!p || p.channel !== 1) return;
   if (state.completedUnits >= state.goalUnits) return;
   completeUnit();
   updateTrack();
-  updateSubtitle(`${state.completedUnits}/${state.goalUnits}`, false);
+  if (typeof showUnitCompleteMessage === 'function') showUnitCompleteMessage();
 });
