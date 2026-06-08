@@ -9,38 +9,59 @@ function initTrack() {
   if (!trackBg) return;
   trackBg.innerHTML = '';
 
-  const cellCount = Math.min(state.goalUnits, MAX_CELLS);
-  for (let i = 0; i < cellCount; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('track-cell');
-    trackBg.appendChild(cell);
+  const p = getCurrentProject();
+  if (!p) return;
+
+  if (p.channel === 2) {
+    // CH2: 하나의 긴 바
+    const bar = document.createElement('div');
+    bar.id = 'time-bar';
+    bar.style.cssText = 'height:100%; width:0%; background:#5dcaa5; border-radius:2px; transition: width 1s linear;';
+    trackBg.appendChild(bar);
+  } else {
+    // CH1: 칸으로 나뉜 트랙
+    const cellCount = Math.min(p.goalUnits, MAX_CELLS);
+    for (let i = 0; i < cellCount; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('track-cell');
+      trackBg.appendChild(cell);
+    }
   }
   updateTrack();
 }
 
+
 // 트랙 업데이트
 function updateTrack() {
-  const cells = document.querySelectorAll('.track-cell');
-  if (cells.length === 0) return;
+  const p = getCurrentProject();
+  if (!p) return;
 
-  const filledRatio = state.goalUnits === 0 ? 0 : state.completedUnits / state.goalUnits;
-  const filledCount = filledRatio * cells.length;
-
-  cells.forEach((cell, index) => {
-    cell.classList.remove('filled', 'partial');
-    cell.style.removeProperty('--fill-pct');
-
-    if (index < Math.floor(filledCount)) {
-      cell.classList.add('filled');
-    } else if (index === Math.floor(filledCount)) {
-      const pct = (filledCount - Math.floor(filledCount)) * 100;
-      if (pct > 0) {
-        cell.classList.add('partial');
-        cell.style.setProperty('--fill-pct', `${pct}%`);
+  if (p.channel === 2) {
+    const bar = document.getElementById('time-bar');
+    if (!bar) return;
+    const pct = p.goalMinutes === 0 ? 0 : (p.completedMinutes / p.goalMinutes) * 100;
+    bar.style.width = `${Math.min(pct, 100)}%`;
+  } else {
+    const cells = document.querySelectorAll('.track-cell');
+    if (cells.length === 0) return;
+    const filledRatio = p.goalUnits === 0 ? 0 : p.completedUnits / p.goalUnits;
+    const filledCount = filledRatio * cells.length;
+    cells.forEach((cell, index) => {
+      cell.classList.remove('filled', 'partial');
+      cell.style.removeProperty('--fill-pct');
+      if (index < Math.floor(filledCount)) {
+        cell.classList.add('filled');
+      } else if (index === Math.floor(filledCount)) {
+        const pct = (filledCount - Math.floor(filledCount)) * 100;
+        if (pct > 0) {
+          cell.classList.add('partial');
+          cell.style.setProperty('--fill-pct', `${pct}%`);
+        }
       }
-    }
-  });
+    });
+  }
 }
+
 
 // 단위 완료 버튼
 document.getElementById('btn-unit').addEventListener('click', () => {

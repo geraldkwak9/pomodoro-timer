@@ -3,6 +3,14 @@
    ================================ */
 
 /* 색상 변수 (팀원들 공통 사용) */
+
+html {
+  background-image: url('bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 :root {
   --screen-bg: #0d1117;
   --accent-amber: #f0c060;
@@ -22,13 +30,10 @@
 body {
   min-height: 100vh;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   font-family: 'Courier New', monospace;
-  background-image: url('배경.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: transparent; 
 }
 
 /* ================================
@@ -36,74 +41,39 @@ body {
    ================================ */
 .scene {
   width: 100%;
-  max-width: 700px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: 60px;
+  max-width: 1920px;
+  padding-bottom: 0; 
 }
 
 /* ================================
    TV 본체
    ================================ */
-.tv-body {
-  background: linear-gradient(
-    145deg,
-    #9a6830 0%,
-    #c8924a 20%,
-    #8b5e3c 45%,
-    #c8924a 70%,
-    #7a4a20 100%
-  );
-  border-radius: 14px;
-  padding: 22px 22px 18px;
-  box-shadow:
-    inset 0 2px 6px rgba(255,255,255,0.12),
-    inset 0 -3px 8px rgba(0,0,0,0.3),
-    6px 8px 0 #3a1e08,
-    0 20px 60px rgba(0,0,0,0.5);
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
+
+.tv-wrap {
   position: relative;
+  width: 100vw;
+  max-width: 1920px;
+  background: transparent;
 }
 
-/* 상단 버터색 라인 */
-.tv-body::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: #e8c870;
-  border-radius: 14px 14px 0 0;
-}
-
-.tv-left {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* ================================
-   TV 화면
-   ================================ */
-.tv-screen-frame {
-  background: #111;
-  border-radius: 8px;
-  padding: 7px;
-  box-shadow:
-    inset 0 3px 10px rgba(0,0,0,0.9),
-    inset 0 0 0 1px #e8c870;
+.tv-img {
+  width: 100%;
+  display: block;
+  filter: drop-shadow(0 20px 60px rgba(0,0,0,0.5));
 }
 
 .tv-screen {
-  background: var(--screen-bg);
-  border-radius: 4px;
-  overflow: hidden;
-  width: 320px;
-  min-height: 220px;
+   position: absolute;
+  left: 28.1%;
+  top: 26.5%;
+  width: 37.0%;
+  height: 40.4%;
+  background: var(--screen-bg);  /* 추가 */
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  clip-path: none;
+  border-radius: 4% /1%;
 }
 
 .screen-header {
@@ -180,6 +150,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .subtitle-dot {
@@ -205,32 +176,30 @@ body {
 /* ================================
    버튼 패널
    ================================ */
-.btn-panel {
-  background: #1a1a1a;
-  border-radius: 6px;
-  padding: 8px 12px;
-  border-top: 2px solid #e8c870;
-}
 
-.btn-group {
+.btn-row {
+  position: absolute;
+
+  left: 39%;
+  top: 71.55%;
+
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  gap: 28px;
+  align-items: center;
 }
-
 .tv-btn {
-  width: 32px;
-  height: 32px;
+width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #e8c870, #a07830);
-  border: 2px solid #5a3a08;
-  color: #3a1e08;
+  background: radial-gradient(circle at 35% 30%, #e8dfc0, #c8b98a, #a89060);
+  border: 2px solid #8a7040;
+  color: #5a3a08;
   font-size: 11px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.2);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.3);
   transition: all 0.1s ease;
 }
 
@@ -240,82 +209,179 @@ body {
 
 .tv-btn:active {
   transform: scale(0.93);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 .tv-btn#btn-unit {
-  background: radial-gradient(circle at 35% 30%, #7ae0c0, #3a8a70);
-  border-color: #2d4a3e;
-  color: #0a1a14;
+ background: radial-gradient(circle at 35% 30%, #2a2520, #28221e, #1e1a16);
+  border-color: #0a0808;
+  color: #e8dfc0;
+  margin-left: 24px;
 }
 
 /* ================================
    다이얼
    ================================ */
-.dial-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 16px;
-  background: #1a1a1a;
-  border-radius: 8px;
-  padding: 14px 10px;
-  border: 1px solid #e8c870;
-}
 
-.dial-wrap {
+   .dial-wrap {
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  transform: translate(-50%, -50%);
+}
+
+.ch-dial-wrap {
+  left: 73.6%;  
+  top: 34.5%; 
+}
+
+.tuning-dial-wrap {
+  left: 73.6%; 
+  top: 47.2%; 
 }
 
 .dial {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #e8c870, #7a5010);
-  border: 3px solid #111;
+  background: radial-gradient(circle at 35% 30%, #f5e8c0, #c8a84a, #8a6820);
+  border: 3px solid #5a3e10;
   position: relative;
   cursor: pointer;
-  box-shadow:
-    0 3px 8px rgba(0,0,0,0.5),
-    inset 0 1px 3px rgba(255,255,255,0.25);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.3);
   transition: transform 0.15s ease;
 }
 
 .dial::after {
-  content: '';
+   content: '';
   position: absolute;
-  top: 6px;
+  top: 7px;
   left: 50%;
   transform: translateX(-50%);
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #1a1a1a;
+  background: #2a1a05;
 }
 
 .dial:active {
   transform: rotate(25deg);
 }
 
-.dial-label {
-  font-size: 8px;
-  color: #e8c870;
-  letter-spacing: 0.05em;
-  font-family: monospace;
-}
+
 
 /* ================================
-   튜닝 카운트 배지 (4번 역할)
+   튜닝 카운트 배지 
    ================================ */
+   /* 
 .tuning-count {
   font-size: 9px;
   font-family: monospace;
   color: var(--accent-green);
   letter-spacing: 0.04em;
-  min-width: 14px;
-  text-align: center;
-  line-height: 1;
+  text-shadow: 0 0 6px rgba(93,202,165,0.6);
+} */
+
+/* ================================
+   설정 팝업
+   ================================ */
+.setup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.setup-modal {
+  background: #1a1a1a;
+  border: 1px solid #e8c870;
+  border-radius: 12px;
+  padding: 32px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.setup-modal h2 {
+  font-size: 14px;
+  color: #e8c870;
+  font-family: monospace;
+  margin-bottom: 8px;
+}
+
+.ch-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2a2a2a;
+  border: 1px solid #e8c870;
+  border-radius: 6px;
+  color: #e8c870;
+  font-family: monospace;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.ch-btn:hover {
+  background: #3a3a2a;
+}
+
+.setup-modal input {
+  width: 100%;
+  padding: 10px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #f0f0f0;
+  font-family: monospace;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+#setup-confirm {
+  width: 100%;
+  padding: 12px;
+  background: #e8c870;
+  border: none;
+  border-radius: 6px;
+  color: #1a1a1a;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+#project-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.del-btn {
+  width: 28px;
+  height: 28px;
+  background: #3a1a1a;
+  border: 1px solid #aa4444;
+  border-radius: 4px;
+  color: #ff6666;
+  font-size: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+#back-btn, #close-btn {
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #888;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 6px 10px;
+  cursor: pointer;
+  margin-bottom: 8px;
 }

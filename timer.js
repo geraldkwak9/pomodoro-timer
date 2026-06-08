@@ -1,5 +1,7 @@
 'use strict';
 
+let sessionStartTime = null;
+
 // ── 상수 ─────────────────────────────────────────────────────────────────────
 const BREAK_DURATION_SECONDS = 10 * 60; // 10분 휴식
 
@@ -22,7 +24,25 @@ function updateDisplay() {
 
   // subtitle.js 연동: 1분 전 경고 감지 (런타임 호출이므로 로드 순서 무관)
   if (typeof checkOneMinuteLeft === 'function') checkOneMinuteLeft(timeText);
+
+  // CH2 시간 기반: 타이머 틱마다 트랙 자동 업데이트
+const p = getCurrentProject();
+if (p && p.channel === 2) {
+  const currentElapsed = sessionStartTime
+    ? (Date.now() - sessionStartTime) / 1000 / 60
+    : 0;
+  const totalElapsed = accumulatedMinutes + currentElapsed;
+
+  const data = loadProgress();
+  const project = data.projects.find(proj => proj.id === data.currentProjectId);
+  if (project) {
+    project.completedMinutes = Math.min(totalElapsed, project.goalMinutes);
+    saveProgress(data);
+    if (typeof updateTrack === 'function') updateTrack();
+  }
 }
+}
+
 
 // ── 세션/휴식 Phase 전환 처리 ────────────────────────────────────────────────
 function onPhaseEnd() {
@@ -87,14 +107,22 @@ function runTimer() {
   }, 1000);
 }
 
+// pauseTimer: sessionStartTime을 null로 지우지 말고 누적 elapsed를 별도 보관
+let accumulatedMinutes = 0; // 누적 경과 분 (일시정지 보존용)
+
 // ── 공개 함수: 시작 ───────────────────────────────────────────────────────────
 function startTimer() {
   if (isRunning) return;
+  sessionStartTime = Date.now();
   runTimer();
 }
 
 // ── 공개 함수: 일시정지 ───────────────────────────────────────────────────────
 function pauseTimer() {
+  if (sessionStartTime) {
+    accumulatedMinutes += (Date.now() - sessionStartTime) / 1000 / 60;
+  }
+  sessionStartTime = null;  // 이제 안전하게 null 가능
   clearInterval(timerId);
   timerId = null;
   isRunning = false;
@@ -106,6 +134,8 @@ function resetTimer() {
   timerId = null;
   isRunning = false;
   currentPhase = 'session';
+  accumulatedMinutes = 0; 
+  sessionStartTime = null; 
 
   // ★ [4번 역할 주입] localStorage 완전 초기화 (tuningCount, nextSessionTime)
   if (typeof setTuningCount === 'function') setTuningCount(0);
