@@ -509,3 +509,17 @@ width: 42px;
   padding: 6px 10px;
   cursor: pointer;
 }
+
+/* ================================
+   CF 화면 (휴식 팝업) UI 스케일업
+   ================================ */
+   #cf-emoji {
+    font-size: clamp(80px, 11vw, 180px) !important;
+    line-height: 1 !important;
+    text-align: center !important;
+}
+
+#cf-text {
+    font-size: clamp(16px, 1.8vw, 28px) !important;
+    letter-spacing: 0.06em !important;
+}
