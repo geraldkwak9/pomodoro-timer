@@ -80,7 +80,6 @@ function onPhaseEnd() {
 
     // 휴식 Phase로 전환
     if (typeof showCFScreen === 'function') showCFScreen(BREAK_DURATION_SECONDS);
-    if (typeof bgmFadeOut === 'function') bgmFadeOut();
     currentPhase = 'break';
     timeLeft = BREAK_DURATION_SECONDS;
     updateDisplay();
@@ -89,7 +88,6 @@ function onPhaseEnd() {
   } else {
     // 휴식 종료 → 세션 Phase로 전환
     if (typeof hideCFScreen === 'function') hideCFScreen();
-    if (typeof bgmPlay === 'function') bgmPlay();
     currentPhase = 'session';
 
     // ★ [4번 역할 주입] tuningCount 완전 초기화 + nextSessionTime 반영(15분 또는 25분)
@@ -142,7 +140,6 @@ function startTimer() {
   fadeTimerId = setTimeout(() => {
     if (timerDisplay) timerDisplay.classList.add('faded');
   }, 5000);
-  if (typeof bgmPlay === 'function') bgmPlay();
   runTimer();
 }
 
@@ -155,7 +152,6 @@ function pauseTimer() {
   clearTimeout(fadeTimerId);
   if (timerDisplay) timerDisplay.classList.remove('faded');
   clearInterval(timerId);
-  if (typeof bgmFadeOut === 'function') bgmFadeOut();
   timerId = null;
   isRunning = false;
 }
@@ -187,7 +183,6 @@ if (timerDisplay) timerDisplay.classList.remove('faded');
   if (typeof setNextSessionTime === 'function') setNextSessionTime(25);
 
   timeLeft = 25 * 60;
-  if (typeof bgmStop === 'function') bgmStop();
   updateDisplay();
 
   // [자막 추가] 리셋 시 자막 출력

@@ -84,10 +84,10 @@ body {
   border-bottom: 1px solid #252818;
 }
 
-.ch-tag, .session-tag { 
-  font-size: clamp(14px, 1.5vw, 24px); 
-  color: var(--text-secondary); 
-  letter-spacing: 0.08em; 
+.ch-tag, .session-tag {
+  font-size: 9px;
+  color: var(--text-secondary);
+  letter-spacing: 0.08em;
 }
 
 /* 타이머 */
@@ -96,15 +96,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
+  padding: 24px 20px;
 }
 
 .timer-display {
-  font-size: clamp(64px, 7.5vw, 130px);
+  font-size: 56px;
   font-weight: 500;
   color: var(--accent-amber);
   letter-spacing: 0.05em;
-  text-shadow: 0 0 30px rgba(212, 168, 67, 0.4);
+  text-shadow: 0 0 20px rgba(212,168,67,0.3);
   opacity: 1;
   transition: opacity 1.5s ease;
 }
@@ -158,17 +158,17 @@ body {
   position: relative; 
   background: #13150e;
   border-top: 1px solid #252818;
-  padding: 10px 18px;
-  min-height: 46px;
+  padding: 6px 14px;
+  min-height: 28px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .subtitle-dot {
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--accent-amber);
   flex-shrink: 0;
@@ -176,7 +176,7 @@ body {
 }
 
 .subtitle-text {
-  font-size: 17px;
+  font-size: 10px;
   color: var(--accent-amber);
   font-family: monospace;
 }
@@ -508,16 +508,4 @@ width: 42px;
   font-size: 11px;
   padding: 6px 10px;
   cursor: pointer;
-}
-
-/* CF 화면 이모지·텍스트 스케일업 */
-#cf-emoji {
-  font-size: clamp(80px, 11vw, 180px);
-  line-height: 1;
-  text-align: center;
-}
-
-#cf-text {
-  font-size: clamp(16px, 1.8vw, 28px);
-  letter-spacing: 0.06em;
 }

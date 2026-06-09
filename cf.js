@@ -60,8 +60,8 @@ function showCFScreen(breakDurationSeconds) {
     z-index: 0;
   `;
   cfDiv.innerHTML = `
-    <div id="cf-emoji" style="transition: opacity 0.8s ease;">${item.emoji}</div>
-    <div id="cf-text" style="font-family: monospace; color: #d4a843; transition: opacity 0.8s ease;">${item.text}</div>
+    <div id="cf-emoji" style="font-size: 48px; transition: opacity 0.8s ease;">${item.emoji}</div>
+    <div id="cf-text" style="font-family: monospace; font-size: 14px; color: #d4a843; transition: opacity 0.8s ease;">${item.text}</div>
   `;
   screen.appendChild(cfDiv);
 
