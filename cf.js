@@ -30,6 +30,9 @@ function setCFItems(items) {
 let cfWarningFired = false;
 
 function showCFScreen(breakDurationSeconds) {
+  // 기존 overlay 제거 먼저
+  const existing = document.getElementById('cf-overlay');
+  if (existing) existing.remove();
   cfWarningFired = false;
   const items = getCFItems();
   const item = items[Math.floor(Math.random() * items.length)];
@@ -78,8 +81,8 @@ function showCFScreen(breakDurationSeconds) {
 }
 
 function onBreakOneMinuteLeft() {
-  //if (cfWarningFired) return;
-  //cfWarningFired = true;
+  if (cfWarningFired) return;
+  cfWarningFired = true;
   // subtitle-bar 다시 보여주기
   const subtitleBar = document.querySelector('.subtitle-bar');
   if (subtitleBar) subtitleBar.style.display = 'flex';
