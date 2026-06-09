@@ -29,7 +29,6 @@ function updateDisplay() {
 
   if (timerDisplay) timerDisplay.textContent = timeText;
 
-
   if (currentPhase === 'session' && timeLeft === 60) {
   if (typeof showCFComingMessage === 'function') showCFComingMessage();
 }
@@ -40,7 +39,7 @@ if (currentPhase === 'break' && timeLeft === BREAK_WARNING_SECONDS) {
 
   // CH2 시간 기반: 타이머 틱마다 트랙 자동 업데이트
 const p = getCurrentProject();
-if (p && p.channel === 2) {
+if (p && p.channel === 2 && currentPhase === 'session') {
   const currentElapsed = sessionStartTime
     ? (Date.now() - sessionStartTime) / 1000 / 60
     : 0;
@@ -93,7 +92,6 @@ function onPhaseEnd() {
     // ★ [4번 역할 주입] tuningCount 완전 초기화 + nextSessionTime 반영(15분 또는 25분)
     if (typeof resetForNextSession === 'function') resetForNextSession();
     timeLeft = (typeof getNextSessionTime === 'function' ? getNextSessionTime() : 25) * 60;
-
     updateDisplay();
     
 // ──────────────────────────────────────────────────────────────
